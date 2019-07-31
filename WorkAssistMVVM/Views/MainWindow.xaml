@@ -3,8 +3,354 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="350" Width="525">
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:p="clr-namespace:WorkAssistMVVM.Models"
+        Title="{Binding Title}" Height="800" Width="1000" MinWidth="800">
+    <Window.Resources>
+        <!--<Style TargetType="TabItem" >
+            <Setter Property="Header" Value="{Binding DataContext.Title}" />
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>-->
+        <SolidColorBrush x:Key="TabItem.Static.Background" Color="Transparent"/>
+        <SolidColorBrush x:Key="TabItem.MouseOver.Border" Color="Transparent"/>
+        <SolidColorBrush x:Key="TabItem.Disabled.Background" Color="#F0F0F0"/>
+        <SolidColorBrush x:Key="TabItem.Disabled.Border" Color="Blue"/>
+        <SolidColorBrush x:Key="TabItem.Selected.Border" Color="Transparent"/>
+        <SolidColorBrush x:Key="TabItem.Selected.Background" Color="Transparent"/>
+        <Style TargetType="TabItem">
+            <Setter Property="Header" Value="{Binding DataContext.Title}" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource TabItem.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TabItem.Static.Border}"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="6,2,6,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property ="HeaderTemplate" >
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock x:Name="headerText" Text="{Binding Path=Header, RelativeSource={RelativeSource AncestorType=TabItem}}" FontSize="18" />
+
+                        <DataTemplate.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="FontWeight" TargetName="headerText" Value="Bold"/>
+                            </MultiDataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </Setter.Value>
+
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid x:Name="templateRoot" SnapsToDevicePixels="true" Height="40" Width="100">
+                            <Border x:Name="mainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,1,1,0" Background="{TemplateBinding Background}" Margin="1">
+                                <Border x:Name="innerBorder" BorderBrush="{StaticResource TabItem.Selected.Border}" BorderThickness="0,0,0,0" Background="{StaticResource TabItem.Selected.Background}" Margin="-1" Opacity="0"/>
+                            </Border>
+                            <ContentPresenter x:Name="contentPresenter" ContentSource="Header" Focusable="False" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                            <Grid Height="2" x:Name="bottomLine" VerticalAlignment="Bottom" Background="White" Visibility="Hidden">
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Left"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Opacity" TargetName="contentPresenter" Value="0.56"/>
+                                <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Border}"/>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,0,1"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,0,1"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Opacity" TargetName="contentPresenter" Value="0.56"/>
+                                <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Border}"/>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,0,1,1"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,0,1,1"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Right"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Opacity" TargetName="contentPresenter" Value="0.56"/>
+                                <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Border}"/>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="0,1,1,1"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="0,1,1,1"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Top"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Opacity" TargetName="contentPresenter" Value="0.56"/>
+                                <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Border}"/>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,0"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,0"/>
+                            </MultiDataTrigger>
+
+
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Left"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,0,1"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,0,1"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Left"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Panel.ZIndex" Value="1"/>
+                                <Setter Property="Margin" Value="-2,-2,0,-2"/>
+                                <Setter Property="Opacity" TargetName="innerBorder" Value="1"/>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,0,1"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,0,1"/>
+                            </MultiDataTrigger>
+
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,0,1,1"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,0,1,1"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Panel.ZIndex" Value="1"/>
+                                <Setter Property="Margin" Value="-2,0,-2,-2"/>
+                                <Setter Property="Opacity" TargetName="innerBorder" Value="1"/>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,0,1,1"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,0,1,1"/>
+                            </MultiDataTrigger>
+
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Right"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="0,1,1,1"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="0,1,1,1"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Right"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Panel.ZIndex" Value="1"/>
+                                <Setter Property="Margin" Value="0,-2,-2,-2"/>
+                                <Setter Property="Opacity" TargetName="innerBorder" Value="1"/>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="0,1,1,1"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="0,1,1,1"/>
+                            </MultiDataTrigger>
+
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="false"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Top"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,0"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,0"/>
+
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true"/>
+                                    <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Top"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Panel.ZIndex" Value="1"/>
+                                <Setter Property="Margin" Value="-2,-2,-2,0"/>
+                                <Setter Property="Opacity" TargetName="innerBorder" Value="1"/>
+                                <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,0"/>
+                                <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,0"/>
+                                <!--<Setter Property="Foreground" Value="Wheat"/>-->
+                                <Setter Property="Visibility" TargetName="bottomLine" Value="Visible"/>
+
+                            </MultiDataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <ContentControl prism:RegionManager.RegionName="ContentRegion" />
+        <!--<ContentControl prism:RegionManager.RegionName="ContentRegion" />-->
+        <Button Content="test" Height="30"/>
+        <Grid Background="#FF038F94">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            
+            <WrapPanel HorizontalAlignment="Right" Grid.Column="1">
+                <TextBox x:Name="txtbSearchString" Text="{Binding SearchString}" Width="250" VerticalContentAlignment="Center" Margin="5,5" BorderBrush="LightBlue"/>
+                <Button x:Name="btnSearch" Command="{Binding SearchCommand}" 
+                        Style="{DynamicResource ButtonStyle1}" IsEnabled="{Binding ElementName=txtbSearchString,Path=Text.Length}"
+                        Height="30" Width="60" Margin="5,5" FontSize="12" Content="搜索"/>
+                <Button x:Name="btnHelp" Style="{DynamicResource ButtonStyle1}" Height="30" Width="60" Margin="5,5" FontSize="12" Content="帮助"/>
+            </WrapPanel>
+            <WrapPanel FlowDirection="LeftToRight" Grid.ColumnSpan="3" Margin="5">                
+                <Button x:Name="btnKPI" Style="{DynamicResource ButtonStyle1}" 
+                        Height="45" Width="80" FontSize="15" Margin="5" Content="绩效情况" 
+                        Command="{Binding NavigateCommand}" CommandParameter="KPI" />
+                <Button x:Name="btnTeamCase" Style="{DynamicResource ButtonStyle1}" 
+                        Height="45" Width="80" FontSize="15" Margin="5" Content="团队案件"
+                        Command="{Binding NavigateCommand}" CommandParameter="UCTeamCase"/>
+                <Button x:Name="btnTeam" Style="{DynamicResource ButtonStyle1}" Height="45" Width="80" FontSize="15" Margin="5" Content="团队情况"/>
+                <Button Style="{DynamicResource ButtonStyle1}" 
+                        Height="45" Width="80" FontSize="15" Margin="5" Content="递交权值" 
+                        Command="{Binding NavigateCommand}" CommandParameter="UCDonePointList" />
+                <Button Style="{DynamicResource ButtonStyle1}" 
+                        Height="45" Width="80" FontSize="15" Margin="5" Content="汇总数据" 
+                        Command="{Binding NavigateCommand}" CommandParameter="KPISummarize" />
+            </WrapPanel>
+            <TabControl x:Name="tbcMain" Grid.Row="1" 
+                        Grid.ColumnSpan="2" Grid.RowSpan="2" Style="{DynamicResource TabControlStyle1}"
+                        prism:RegionManager.RegionName="ContentRegion" Margin="5" >
+                <TabItem x:Name="tabLocal" Header="本地界面" Style="{DynamicResource TabItemStyle1}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="310"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="{Binding ElementName=dgabstracts,Path=Height}" MaxHeight="400"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+    
+                        <StackPanel  Grid.ColumnSpan="2" >
+                            <WrapPanel Margin="10,0,0,0">
+                                <RadioButton x:Name="rbtnCN" Content="新申请" Style="{DynamicResource rbtnStyle}" Command="{Binding RadioButtonSelecteCommand}" CommandParameter="app" />
+                                <RadioButton x:Name="rbtnOA" Content="OA" Style="{DynamicResource rbtnStyle}" Command="{Binding RadioButtonSelecteCommand}" CommandParameter="oa"  Margin="5"/>
+                                <RadioButton x:Name="rbtnOther" Content="其他" Style="{DynamicResource rbtnStyle}" Command="{Binding RadioButtonSelecteCommand}" CommandParameter="other"/>
+                                <TextBlock Text="{Binding Count}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="13" Margin="10,0,0,0"/>
+                            </WrapPanel>
+                        </StackPanel>
+                        <WrapPanel Grid.Row="1" Grid.ColumnSpan="2">
+                            <DataGrid x:Name="dgabstracts" Grid.Row="1" Grid.ColumnSpan="2" Background="Transparent" 
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                      CanUserAddRows="False" ItemsSource="{Binding TaskLists}" 
+                                      AutoGenerateColumns="False" Style="{DynamicResource dgStyle}"
+                                      HeadersVisibility="All" IsReadOnly="True" MaxHeight="400">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="SelectionChanged">
+                                         <!--This action will invoke the selected command in the view model and pass the parameters of the event to it.--> 
+                                        <prism:InvokeCommandAction Command="{Binding SelectionCommand}" TriggerParameterPath="AddedItems" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <DataGrid.Columns>                                
+                                    <DataGridTextColumn Header="序号" Binding="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}, Mode=FindAncestor}}" />
+                                    <DataGridTextColumn Header="我方案号" Binding="{Binding AttorneySeries}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                    <DataGridTextColumn Header="任务名称" Binding="{Binding TaskName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                    <DataGridTextColumn Header="任务属性" Binding="{Binding TaskAttribute}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                    <DataGridTextColumn Header="客户名称" Binding="{Binding CustomerName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                    <DataGridTextColumn Header="案件名称" Binding="{Binding CaseName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                    <DataGridTextColumn Header="初稿期限" Binding="{Binding FirstVersionDeadline, StringFormat={}{0:yyyy-MM-dd}}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                    <DataGridTextColumn Header="状态" Binding="{Binding ProcessStage}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                    <DataGridTextColumn Header="剩余天数" Binding="{Binding DaysLeft}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                </DataGrid.Columns>                            
+                            </DataGrid>
+                            <StackPanel>
+                                <WrapPanel>
+                                    <Label Content="申请号:" Style="{DynamicResource lbStyleKPI}"/>
+                                    <TextBox Text="{Binding SelectedCaseInfo.AppSerialNum}" Style="{DynamicResource tbStyleKPI}" Width="100"/>                                    
+                                </WrapPanel>
+                            </StackPanel>
+                        </WrapPanel>
+                        <Border BorderThickness="0" BorderBrush="LightBlue" Grid.ColumnSpan="2" Grid.Row="2" Margin="0,2" CornerRadius="1">
+                            <WrapPanel>
+                                <Button x:Name="btnBack" Content="&lt;" Command="{Binding BackwardCommand}" Style="{DynamicResource ButtonStyle1}" Height="25" Width="30" FontSize="12" Margin="5" >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <prism:InvokeCommandAction Command="{Binding ForwardCommand}"  TriggerParameterPath="Name"/>
+                                            <i:InvokeCommandAction Command="{Binding OnBackward}" CommandParameter="{Binding ElementName=wbLocalFiles}"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <Button x:Name="btnForward" Content="&gt;" Command="{Binding ForwardCommand}" Style="{DynamicResource ButtonStyle1}" Height="25" Width="30" FontSize="12" Margin="5"/>
+                                <Button Style="{DynamicResource ButtonStyle1}" Height="25" Width="80" FontSize="12" Margin="5" Content="新建文件夹" IsEnabled="{Binding HasFolder}"/>
+                                <Button x:Name="btnOpenLocal" Style="{DynamicResource ButtonStyle1}" Command="{Binding OpenlocalCommand}" Height="25" Width="80" FontSize="12" Margin="5" Content="打开文件夹"/>
+                                <Button x:Name="btnNewApp" Style="{DynamicResource ButtonStyle1}" Height="25" Width="80" FontSize="12" Margin="5" Content="新建发明"/>
+                                <Button x:Name="btnNewUnity" Style="{DynamicResource ButtonStyle1}" Height="25" Width="80" FontSize="12" Margin="5" Content="新建实新"/>
+                                <Button x:Name="btnNewOA" Style="{DynamicResource ButtonStyle1}" Height="25" Width="80" FontSize="12" Margin="5" Content="新建OA"/>
+                            </WrapPanel>
+                        </Border>
+                        <DataGrid Grid.Row="3" Background="Transparent" Grid.ColumnSpan="2"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                      CanUserAddRows="False" ItemsSource="{Binding FileList}" 
+                                      AutoGenerateColumns="False" Style="{DynamicResource dgStyle}"
+                                      HeadersVisibility="All" IsReadOnly="True" MaxHeight="400">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <!--This action will invoke the selected command in the view model and pass the parameters of the event to it.-->
+                                    <prism:InvokeCommandAction Command="{Binding DownloadFileCommand}" TriggerParameterPath="AddedItems" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="序号" Binding="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}, Mode=FindAncestor}}" />
+                                <DataGridTextColumn Header="文件名" Binding="{Binding FileName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                <DataGridTextColumn Header="文件描述" Binding="{Binding FileDescribe}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                <DataGridTextColumn Header="上传用户" Binding="{Binding UploadUser}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                <DataGridTextColumn Header="上传时间" Binding="{Binding UploadTime}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                <!--<DataGridHyperlinkColumn Header="下载" Binding="{Binding UploadTime}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>-->
+                                <DataGridTemplateColumn >
+                                    
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+
+                        </DataGrid>
+                        <WebBrowser p:WebBrowserUtility.BindableSource="{Binding CasePath}"  x:Name="wbLocalFiles"  Margin="5" Grid.ColumnSpan="2" Grid.Row="4" Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Navigated">                                    
+                                    <i:InvokeCommandAction Command="{Binding BrowseCommand}" CommandParameter="{Binding ElementName=wbLocalFiles}" />
+                                    <i:InvokeCommandAction Command="{Binding ForwardCommand}"/>
+                                    <prism:InvokeCommandAction Command="{Binding ForwardCommand}" TriggerParameterPath="Uri"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </WebBrowser>
+
+                    </Grid>
+                </TabItem>
+                <TabItem x:Name="tabBrowser" Header="浏览器" Style="{DynamicResource TabItemStyle1}">
+                    <WebBrowser x:Name="wbACIP" Source="http://www.acip.vip">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="LoadCompleted">
+                                <!-- This action will invoke the selected command in the view model and pass the parameters of the event to it. -->
+                                <i:InvokeCommandAction Command="{Binding GetCookieCommand}" CommandParameter="{Binding ElementName=wbACIP}" />
+                                <!--<i:InvokeCommandAction Command="{Binding ForwardCommand}"/>-->
+                                <!--<prism:InvokeCommandAction Command="{Binding ForwardCommand}" TriggerParameterPath="Uri"/>-->
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </WebBrowser>                    
+                </TabItem>
+                
+            </TabControl>
+        </Grid>
     </Grid>
 </Window>

@@ -15,9 +15,16 @@ namespace WorkAssistMVVM
             return Container.Resolve<MainWindow>();
         }
 
+
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            containerRegistry.RegisterForNavigation<KPI>();
+            containerRegistry.RegisterForNavigation<KPIPlan>();
+            containerRegistry.RegisterForNavigation<AttitudeScore>();
+            containerRegistry.RegisterForNavigation<UCDonePointList>(); 
+            containerRegistry.RegisterForNavigation<KPISummarize>();
+            containerRegistry.RegisterForNavigation<UCTeamCase>();
         }
+
     }
 }

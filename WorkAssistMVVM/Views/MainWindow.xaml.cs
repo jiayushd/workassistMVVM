@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using WorkAssistMVVM.ViewModels;
 
 namespace WorkAssistMVVM.Views
 {
@@ -11,5 +14,6 @@ namespace WorkAssistMVVM.Views
         {
             InitializeComponent();
         }
+
     }
 }
