@@ -75,6 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\RowToIndexConv.cs" />
     <Compile Include="Models\Bill.cs" />
     <Compile Include="Models\Department.cs" />
     <Compile Include="Models\ErrorInfo.cs" />

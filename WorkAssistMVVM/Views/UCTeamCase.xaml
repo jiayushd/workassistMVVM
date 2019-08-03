@@ -362,7 +362,7 @@
                         <RadioButton Content="其他" Foreground="White" IsEnabled="{Binding RadiobuttonEnable}"
                                      Command="{Binding GetAllOtherCommand}" Margin="5,0"/>
                     </WrapPanel>
-                    <DataGrid x:Name="dgUndonePoint" Grid.Row="2" 
+                    <DataGrid x:Name="dgUndonePoint" Grid.Row="2" MaxWidth="600"
                               AutoGenerateColumns="False" IsReadOnly="True" 
                               Margin="5" Style="{DynamicResource dgStyle}"
                               ItemsSource="{Binding AttorneySummarizes}">
@@ -372,23 +372,33 @@
                                 <prism:InvokeCommandAction Command="{Binding SelectionCommand}" TriggerParameterPath="AddedItems" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
+                        <DataGrid.RowHeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="5,0" Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource RowToIndexConv}}"/>
+                            </DataTemplate>
+                        </DataGrid.RowHeaderTemplate>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="地区" Binding="{Binding Zone}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                            <DataGridTextColumn Header="姓名" Binding="{Binding Name}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                            <DataGridTextColumn Header="权值" Binding="{Binding Weight}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                            <DataGridTextColumn Header="地区" Binding="{Binding Zone}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="*"/>
+                            <DataGridTextColumn Header="姓名" Binding="{Binding Name}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="80"/>
+                            <DataGridTextColumn Header="权值" Binding="{Binding Weight}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="80"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     <DataGrid x:Name="dgUndoneCases" Grid.Row="2" Grid.Column="1" 
                               AutoGenerateColumns="False" IsReadOnly="True" Style="{DynamicResource dgStyle}"
                               Margin="5" ItemsSource="{Binding Tasks}">
+                        <DataGrid.RowHeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="5,0" Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource RowToIndexConv}}"/>
+                            </DataTemplate>
+                        </DataGrid.RowHeaderTemplate>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="我方文号" Binding="{Binding AttorneySeries}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                            <DataGridTextColumn Header="我方文号" Binding="{Binding AttorneySeries}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="auto"/>
                             <!--<DataGridTextColumn Header="承办人" Binding="{Binding Attorney}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>-->
-                            <DataGridTextColumn Header="任务名称" Binding="{Binding TaskName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                            <DataGridTextColumn Header="任务属性" Binding="{Binding TaskAttribute}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                            <DataGridTextColumn Header="客户名称" Binding="{Binding CustomerName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                            <DataGridTextColumn Header="案件名称" Binding="{Binding CaseName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                            <DataGridTextColumn Header="状态" Binding="{Binding ProcessStage}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                            <DataGridTextColumn Header="任务名称" Binding="{Binding TaskName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="auto"/>
+                            <DataGridTextColumn Header="任务属性" Binding="{Binding TaskAttribute}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="auto"/>
+                            <DataGridTextColumn Header="客户名称" Binding="{Binding CustomerName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="*"/>
+                            <DataGridTextColumn Header="案件名称" Binding="{Binding CaseName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"  Width="*"/>
+                            <DataGridTextColumn Header="状态" Binding="{Binding ProcessStage}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="auto"/>
                             <DataGridTextColumn Header="初稿期限" Binding="{Binding FirstVersionDeadline,StringFormat={}{0:yyyy-MM-dd}}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>                    
                             <!--<DataGridTextColumn Header="权值" Binding="{Binding Weight}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>-->
                         </DataGrid.Columns>

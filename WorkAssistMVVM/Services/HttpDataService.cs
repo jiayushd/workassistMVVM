@@ -784,16 +784,15 @@ namespace WorkAssistMVVM.Services
                         caseInfo.CaseID = row["case_id"].ToString();
                         caseInfo.ClientName = row["customer_name"].ToString();
                         caseInfo.ClientSeries = row["app_no"].ToString();
-                        taskInfo.Attorney = row["app_no"].ToString();
+                        taskInfo.Attorney = "";
                         taskInfo.FirstVirsionDeadlineInternal = (DateTime)row["int_first_date"];
                         taskInfo.TaskName = row["ctrl_proc"].ToString();
                         taskInfo.TaskAttribute = row["ctrl_proc_property"].ToString();
                         taskInfo.TaskID = row["proc_id"].ToString();
                         //taskInfo.OfficalDeadline = (DateTime)row["legal_due_date"];
                         taskInfo.ProcessStage = row["proc_status_name"].ToString();
-                        taskInfo.Attorney = row["app_no"].ToString();
-                        taskInfo.Attorney = row["app_no"].ToString();
-                        taskInfo.Attorney = row["app_no"].ToString();
+                        
+
                         if (row["legal_due_date"].ToString() != "")
                         {
                             taskInfo.OfficalDeadline = (DateTime)row["legal_due_date"];
@@ -807,6 +806,64 @@ namespace WorkAssistMVVM.Services
                         caseInfos.Add(caseInfo);
                     }
                 }                
+            }
+            else
+            {
+                MessageBox.Show("登录过期，请重新登录", "出错了", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return caseInfos;
+        }
+
+        public static List<CaseInfo> GetExamList(string cookie_str)
+        {
+            List<CaseInfo> caseInfos = new List<CaseInfo>();
+            //flow_type: EX
+            //call: GetFlowProcess
+            //page_size: -1
+            //page_index: 0
+            //search_key:
+            //get_total: false
+            //key_id: obj_id
+            //id: 
+            //sort: update_time desc
+            string uri = "http://www.acip.vip/ajax/common.ashx";
+            string postData = "flow_type=EX&call=GetFlowProcess&page_size=-1&page_index=0&search_key=&get_total=false&key_id=obj_id&id=&sort=update_time+desc";
+            string content = Surfing(uri, cookie_str, postData);
+            if (!content.Contains("失效"))
+            {
+                JObject jo = (JObject)JsonConvert.DeserializeObject(content);
+                string table_str = jo["table_rows"].ToString();
+                if (table_str != "")
+                {
+                    JArray table = JArray.Parse(table_str);
+                    foreach (JObject row in table)
+                    {
+                        CaseInfo caseInfo = new CaseInfo();
+                        TaskInfo taskInfo = new TaskInfo();
+
+                        caseInfo.AttorneySeries = row["volume"].ToString();
+                        caseInfo.CasedocumentName = row["case_name"].ToString();
+                        taskInfo.Attorney = row["processor"].ToString();
+                        taskInfo.FirstVirsionDeadlineInternal = (DateTime)row["int_first_date"];
+                        taskInfo.TaskName = row["ctrl_proc_zh_cn"].ToString();
+                        taskInfo.TaskAttribute = row["case_status_zh_cn"].ToString();
+                        taskInfo.ProcessStage = "内部审核中";
+                        taskInfo.TaskID = row["obj_id"].ToString();
+
+                        if (row["legal_due_date"].ToString() != "")
+                        {
+                            taskInfo.OfficalDeadline = (DateTime)row["legal_due_date"];
+                        }
+                        if (row["int_first_date"].ToString() != "")
+                        {
+                            taskInfo.FirstVirsionDeadlineInternal = (DateTime)row["int_first_date"];
+                        }
+                        caseInfo.taskInfos = new List<TaskInfo>();
+                        caseInfo.taskInfos.Add(taskInfo);
+                        caseInfos.Add(caseInfo);
+                    }
+                }
             }
             else
             {
@@ -930,7 +987,7 @@ namespace WorkAssistMVVM.Services
             return fileinfos;
         }
 
-        private string Surfing(string uri, string cookie_str,string postData)
+        private static string Surfing(string uri, string cookie_str,string postData)
         {
             byte[] data = Encoding.UTF8.GetBytes(postData);
             HttpWebRequest request;

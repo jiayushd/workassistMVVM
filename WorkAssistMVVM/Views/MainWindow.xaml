@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
+        xmlns:local ="clr-namespace:WorkAssistMVVM.Converters"
         prism:ViewModelLocator.AutoWireViewModel="True"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:p="clr-namespace:WorkAssistMVVM.Models"
@@ -11,6 +12,7 @@
             <Setter Property="Header" Value="{Binding DataContext.Title}" />
             <Setter Property="Foreground" Value="Black"/>
         </Style>-->
+        <local:RowToIndexConv x:Key="RowToIndexConv"/>
         <SolidColorBrush x:Key="TabItem.Static.Background" Color="Transparent"/>
         <SolidColorBrush x:Key="TabItem.MouseOver.Border" Color="Transparent"/>
         <SolidColorBrush x:Key="TabItem.Disabled.Background" Color="#F0F0F0"/>
@@ -238,7 +240,7 @@
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
-                            <RowDefinition Height="{Binding ElementName=dgabstracts,Path=Height}" MaxHeight="400"/>
+                            <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition />
@@ -249,6 +251,7 @@
                                 <RadioButton x:Name="rbtnCN" Content="新申请" Style="{DynamicResource rbtnStyle}" Command="{Binding RadioButtonSelecteCommand}" CommandParameter="app" />
                                 <RadioButton x:Name="rbtnOA" Content="OA" Style="{DynamicResource rbtnStyle}" Command="{Binding RadioButtonSelecteCommand}" CommandParameter="oa"  Margin="5"/>
                                 <RadioButton x:Name="rbtnOther" Content="其他" Style="{DynamicResource rbtnStyle}" Command="{Binding RadioButtonSelecteCommand}" CommandParameter="other"/>
+                                <RadioButton  Content="核稿" Style="{DynamicResource rbtnStyle}" Command="{Binding RadioButtonSelecteCommand}" CommandParameter="EX"/>
                                 <TextBlock Text="{Binding Count}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="13" Margin="10,0,0,0"/>
                             </WrapPanel>
                         </StackPanel>
@@ -257,23 +260,30 @@
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                       CanUserAddRows="False" ItemsSource="{Binding TaskLists}" 
                                       AutoGenerateColumns="False" Style="{DynamicResource dgStyle}"
-                                      HeadersVisibility="All" IsReadOnly="True" MaxHeight="400">
+                                      HeadersVisibility="Column"  IsReadOnly="False" MaxHeight="170">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="SelectionChanged">
                                          <!--This action will invoke the selected command in the view model and pass the parameters of the event to it.--> 
-                                        <prism:InvokeCommandAction Command="{Binding SelectionCommand}" TriggerParameterPath="AddedItems" />
+                                        <prism:InvokeCommandAction Command="{Binding SelectionCommand}" TriggerParameterPath="AddedItems"/>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
+                                <DataGrid.RowHeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Margin="5,0" Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource RowToIndexConv}}"/>
+                                    </DataTemplate>
+                                </DataGrid.RowHeaderTemplate>
                                 <DataGrid.Columns>                                
-                                    <DataGridTextColumn Header="序号" Binding="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}, Mode=FindAncestor}}" />
-                                    <DataGridTextColumn Header="我方案号" Binding="{Binding AttorneySeries}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                    <DataGridTextColumn Header="任务名称" Binding="{Binding TaskName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                    <DataGridTextColumn Header="任务属性" Binding="{Binding TaskAttribute}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                    <DataGridTextColumn Header="客户名称" Binding="{Binding CustomerName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                    <DataGridTextColumn Header="案件名称" Binding="{Binding CaseName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                    <DataGridTextColumn Header="初稿期限" Binding="{Binding FirstVersionDeadline, StringFormat={}{0:yyyy-MM-dd}}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                    <DataGridTextColumn Header="状态" Binding="{Binding ProcessStage}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                    <DataGridTextColumn Header="剩余天数" Binding="{Binding DaysLeft}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                    <!--<DataGridTextColumn Header="序号" Binding="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}, Mode=FindAncestor}}" />-->
+                                    <DataGridTextColumn Header="我方案号" Binding="{Binding AttorneySeries}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="120"/>
+                                    <DataGridTextColumn Header="任务名称" Binding="{Binding TaskName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="80"/>
+                                    <DataGridTextColumn Header="任务属性" Binding="{Binding TaskAttribute}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="80"/>
+                                    <DataGridTextColumn Header="客户名称" Binding="{Binding CustomerName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="*"/>
+                                    <DataGridTextColumn Header="案件名称" Binding="{Binding CaseName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="*"/>
+                                    <DataGridTextColumn Header="承办人" Binding="{Binding Attorney}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="80"/>
+                                    <DataGridTextColumn Header="官方期限" Binding="{Binding OfficalDeadline, StringFormat={}{0:yyyy-MM-dd}}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="100"/>
+                                    <DataGridTextColumn Header="初稿期限" Binding="{Binding FirstVersionDeadline, StringFormat={}{0:yyyy-MM-dd}}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="100"/>
+                                    <DataGridTextColumn Header="状态" Binding="{Binding ProcessStage}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="80"/>
+                                    <DataGridTextColumn Header="剩余天数" Binding="{Binding DaysLeft}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="80"/>
                                 </DataGrid.Columns>                            
                             </DataGrid>
                             <StackPanel>
@@ -283,29 +293,41 @@
                                 </WrapPanel>
                             </StackPanel>
                         </WrapPanel>
-                        <Border BorderThickness="0" BorderBrush="LightBlue" Grid.ColumnSpan="2" Grid.Row="2" Margin="0,2" CornerRadius="1">
+                        <Border BorderThickness="1" BorderBrush="LightBlue" Grid.ColumnSpan="2" Grid.Row="3" Margin="0,2" CornerRadius="1" Background="Azure">
                             <WrapPanel>
-                                <Button x:Name="btnBack" Content="&lt;" Command="{Binding BackwardCommand}" Style="{DynamicResource ButtonStyle1}" Height="25" Width="30" FontSize="12" Margin="5" >
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Click">
-                                            <prism:InvokeCommandAction Command="{Binding ForwardCommand}"  TriggerParameterPath="Name"/>
-                                            <i:InvokeCommandAction Command="{Binding OnBackward}" CommandParameter="{Binding ElementName=wbLocalFiles}"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Button>
-                                <Button x:Name="btnForward" Content="&gt;" Command="{Binding ForwardCommand}" Style="{DynamicResource ButtonStyle1}" Height="25" Width="30" FontSize="12" Margin="5"/>
-                                <Button Style="{DynamicResource ButtonStyle1}" Height="25" Width="80" FontSize="12" Margin="5" Content="新建文件夹" IsEnabled="{Binding HasFolder}"/>
-                                <Button x:Name="btnOpenLocal" Style="{DynamicResource ButtonStyle1}" Command="{Binding OpenlocalCommand}" Height="25" Width="80" FontSize="12" Margin="5" Content="打开文件夹"/>
-                                <Button x:Name="btnNewApp" Style="{DynamicResource ButtonStyle1}" Height="25" Width="80" FontSize="12" Margin="5" Content="新建发明"/>
-                                <Button x:Name="btnNewUnity" Style="{DynamicResource ButtonStyle1}" Height="25" Width="80" FontSize="12" Margin="5" Content="新建实新"/>
-                                <Button x:Name="btnNewOA" Style="{DynamicResource ButtonStyle1}" Height="25" Width="80" FontSize="12" Margin="5" Content="新建OA"/>
+                                <Button x:Name="btnBack" Content="&lt;" Command="{Binding BackwardCommand}" 
+                                        CommandParameter="{Binding ElementName=wbLocalFiles}"
+                                        Style="{DynamicResource ButtonStyle1}" Height="25" Width="30" FontSize="12" Margin="5" />
+                                <Button x:Name="btnForward" Content="&gt;" Command="{Binding ForwardCommand}" 
+                                        Style="{DynamicResource ButtonStyle1}"  CommandParameter="{Binding ElementName=wbLocalFiles}"
+                                        Height="25" Width="30" FontSize="12" Margin="5"/>
+                                <Button Style="{DynamicResource ButtonStyle1}" Height="25" Width="80" 
+                                        FontSize="12" Margin="5" Command="{Binding CreateFolderCommand}"
+                                        Content="新建文件夹" IsEnabled="{Binding HasFolder}"/>
+                                <Button x:Name="btnOpenLocal" Style="{DynamicResource ButtonStyle1}" 
+                                        Command="{Binding OpenlocalCommand}" Height="25" Width="80" 
+                                        FontSize="12" Margin="5" Content="打开文件夹" IsEnabled="{Binding !HasFolder}"/>
+                                <Button x:Name="btnNewApp" Style="{DynamicResource ButtonStyle1}" 
+                                        Height="25" Width="80" FontSize="12" IsEnabled="{Binding !HasFolder}"
+                                        Margin="5" Content="新建发明"/>
+                                <Button x:Name="btnNewUnity" Style="{DynamicResource ButtonStyle1}" 
+                                        Height="25" Width="80" FontSize="12" IsEnabled="{Binding !HasFolder}"
+                                        Margin="5" Content="新建实新"/>
+                                <Button x:Name="btnNewOA" Style="{DynamicResource ButtonStyle1}" 
+                                        Height="25" Width="80" FontSize="12" IsEnabled="{Binding !HasFolder}"
+                                        Margin="5" Content="新建OA"/>
                             </WrapPanel>
                         </Border>
-                        <DataGrid Grid.Row="3" Background="Transparent" Grid.ColumnSpan="2"
+                        <DataGrid Grid.Row="2" Background="Transparent" Grid.ColumnSpan="2"
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                                      CanUserAddRows="False" ItemsSource="{Binding FileList}" 
+                                      CanUserAddRows="False" ItemsSource="{Binding FileList}"
                                       AutoGenerateColumns="False" Style="{DynamicResource dgStyle}"
                                       HeadersVisibility="All" IsReadOnly="True" MaxHeight="400">
+                            <DataGrid.RowHeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="5,0" Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource RowToIndexConv}}"/>
+                                </DataTemplate>
+                            </DataGrid.RowHeaderTemplate>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectionChanged">
                                     <!--This action will invoke the selected command in the view model and pass the parameters of the event to it.-->
@@ -313,26 +335,27 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="序号" Binding="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}, Mode=FindAncestor}}" />
-                                <DataGridTextColumn Header="文件名" Binding="{Binding FileName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                <DataGridTextColumn Header="文件描述" Binding="{Binding FileDescribe}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                <DataGridTextColumn Header="上传用户" Binding="{Binding UploadUser}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
-                                <DataGridTextColumn Header="上传时间" Binding="{Binding UploadTime}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>
+                                <!--<DataGridTextColumn Header="序号" Binding="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}, Mode=FindAncestor}}" />-->
+                                <DataGridTextColumn Header="文件名" Binding="{Binding FileName}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="*"/>
+                                <DataGridTextColumn Header="文件描述" Binding="{Binding FileDescribe}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="*"/>
+                                <DataGridTextColumn Header="上传用户" Binding="{Binding UploadUser}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="*"/>
+                                <DataGridTextColumn Header="上传时间" Binding="{Binding UploadTime}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="*"/>
                                 <!--<DataGridHyperlinkColumn Header="下载" Binding="{Binding UploadTime}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}"/>-->
-                                <DataGridTemplateColumn >
-                                    
-                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
 
                         </DataGrid>
-                        <WebBrowser p:WebBrowserUtility.BindableSource="{Binding CasePath}"  x:Name="wbLocalFiles"  Margin="5" Grid.ColumnSpan="2" Grid.Row="4" Grid.RowSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                            <i:Interaction.Triggers>
+                        <WebBrowser p:WebBrowserUtility.BindableSource="{Binding CasePath, Mode=TwoWay}"
+                                    x:Name="wbLocalFiles"  
+                                    Margin="0" Grid.ColumnSpan="2" Grid.Row="4" Grid.RowSpan="2" 
+                                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <!--p:WebBrowserUtility.BindableSource="{Binding CasePath, Mode=TwoWay}"-->
+                            <!--<i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Navigated">                                    
-                                    <i:InvokeCommandAction Command="{Binding BrowseCommand}" CommandParameter="{Binding ElementName=wbLocalFiles}" />
-                                    <i:InvokeCommandAction Command="{Binding ForwardCommand}"/>
-                                    <prism:InvokeCommandAction Command="{Binding ForwardCommand}" TriggerParameterPath="Uri"/>
+                                    --><!--<i:InvokeCommandAction Command="{Binding BrowseCommand}" CommandParameter="{Binding ElementName=wbLocalFiles}" />--><!--
+                                    <i:InvokeCommandAction Command="{Binding ForwardCommand}" CommandParameter="{Binding ElementName=wbLocalFiles}"/>
+                                    --><!--<prism:InvokeCommandAction Command="{Binding ForwardCommand}" TriggerParameterPath="Uri"/>--><!--
                                 </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                            </i:Interaction.Triggers>-->
                         </WebBrowser>
 
                     </Grid>

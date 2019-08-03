@@ -19,7 +19,7 @@ namespace WorkAssistMVVM.Models
         public DateTime? FirstVirsionDate { get; set; }//初稿日
         public DateTime? DoneDeadlineInternal { get; set; }//定稿期限内
         public DateTime? DoneDeadlineOutside { get; set; }//定稿期限外
-        public DateTime? OfficalDeadline { get; set; }//官方期限
+        public DateTime OfficalDeadline { get; set; }//官方期限
         public DateTime? OfficalActionDate { get; set; }//官方期限
         public DateTime? DoneDate { get; set; }//完成日
         public DateTime? Deliver_to_Office_Date { get; set; }//送官方日期

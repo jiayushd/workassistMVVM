@@ -48,12 +48,24 @@ namespace WorkAssistMVVM.ViewModels
             get { return caseName; }
             set { SetProperty(ref caseName, value); RaisePropertyChanged(); }
         }
+        private string attorney;
+        public string Attorney
+        {
+            get { return attorney; }
+            set { SetProperty(ref attorney, value); }
+        }
         //代理人处理状态
         private string processStage;
         public string ProcessStage
         {
             get { return processStage; }
             set { SetProperty(ref processStage, value); RaisePropertyChanged(); }
+        }
+        private DateTime officalDeadline;
+        public DateTime OfficalDeadline
+        {
+            get { return officalDeadline; }
+            set { SetProperty(ref officalDeadline, value); }
         }
         //初稿期限
         private DateTime firstVersionDeadline;
@@ -69,7 +81,7 @@ namespace WorkAssistMVVM.ViewModels
             get { return daysLeft; }
             set
             {
-                DaysLeft = (DateTime.Now.Date - firstVersionDeadline).Days;
+                //DaysLeft = (DateTime.Now.Date - firstVersionDeadline).Days;
                 SetProperty(ref daysLeft, value);
                 RaisePropertyChanged();
             }

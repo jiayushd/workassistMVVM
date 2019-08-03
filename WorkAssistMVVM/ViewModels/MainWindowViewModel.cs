@@ -36,8 +36,7 @@ namespace WorkAssistMVVM.ViewModels
         public DelegateCommand<string> RadioButtonSelecteCommand { get; private set; }
         public DelegateCommand<object[]> KPICommand { get; private set; }
         public DelegateCommand<object[]> TeamCommand { get; private set; }
-        public DelegateCommand<object[]> ForwardCommand { get; private set; }
-        public DelegateCommand<object[]> BackwardCommand { get; private set; }
+
         public DelegateCommand<object[]> OpenlocalCommand { get; private set; }
         public DelegateCommand<object[]> CreateInventionCommand { get; private set; }
         public DelegateCommand<object[]> CreateUnityCommand { get; private set; }
@@ -168,15 +167,17 @@ namespace WorkAssistMVVM.ViewModels
             SelectionCommand = new DelegateCommand<object[]> (OnItemSelected);
             KPICommand = new DelegateCommand<object[]>(OnItemSelected);
             TeamCommand = new DelegateCommand<object[]>(OnItemSelected);
-            ForwardCommand = new DelegateCommand<object[]>(OnForward);
-            BackwardCommand = new DelegateCommand<object[]>(OnBackward);
+
             OpenlocalCommand = new DelegateCommand<object[]>(OnOpenLocal);
             CreateInventionCommand = new DelegateCommand<object[]>(OnItemSelected);
             CreateUnityCommand = new DelegateCommand<object[]>(OnItemSelected);
             CreateOACommand = new DelegateCommand<object[]>(OnItemSelected);
-            BrowseCommand = new DelegateCommand<WebBrowser>(OnBrowse);
+            //BrowseCommand = new DelegateCommand<WebBrowser>(OnBrowse);
             GetCookieCommand = new DelegateCommand<WebBrowser>(GetCookie);
             DownloadFileCommand = new DelegateCommand<object[]>(DownloadFile);
+            CreateFolderCommand = new DelegateCommand<object[]>(CreateFolder);
+            ForwardCommand = new DelegateCommand<WebBrowser>(OnForward);
+            BackwardCommand = new DelegateCommand<WebBrowser>(OnBackward);
 
             _regionManager = regionManager;
             NavigateCommand = new DelegateCommand<string>(Navigate);
@@ -198,6 +199,13 @@ namespace WorkAssistMVVM.ViewModels
                 HttpDataService.DownloadTaskFile(uri, postData, filePath, Cookie);
                 
             }
+        }
+
+        public DelegateCommand<object[]> CreateFolderCommand { get; private set; }
+        private void CreateFolder(object[] parameter)
+        {
+            Directory.CreateDirectory(Userinfo.WorkPath + "NewApplication\\" + SelectedAttorneySeries);
+            HasFolder = false;
         }
 
         private void Search(object parameter)
@@ -224,6 +232,9 @@ namespace WorkAssistMVVM.ViewModels
                 case "other":
                     CaseInfos = hds.GetOther("");
                     break;
+                case "EX":
+                    CaseInfos = HttpDataService.GetExamList(Cookie);
+                    break;
                 default:
                     break;
             }
@@ -246,11 +257,21 @@ namespace WorkAssistMVVM.ViewModels
                     TaskName = item.taskInfos[0].TaskName,
                     TaskAttribute = item.taskInfos[0].TaskAttribute,
                     Proc_id = item.taskInfos[0].TaskID,
-            };
+                    Attorney = item.taskInfos[0].Attorney,
+                    OfficalDeadline = item.taskInfos[0].OfficalDeadline,
+
+                };
+                TimeSpan ts = item.taskInfos[0].FirstVirsionDeadlineInternal.Date - DateTime.Now.Date;
+                task.DaysLeft = ts.Days;
+                if (task.Attorney == "")
+                {
+                    task.Attorney = userInfo.UserName;
+                }
                 TaskLists.Add(task);
             }
         }
 
+        //选中一个案子
         private void OnItemSelected(object[] selectedItems)
         {
             if (selectedItems != null && selectedItems.Count() > 0)
@@ -258,10 +279,13 @@ namespace WorkAssistMVVM.ViewModels
                 TaskViewModel task = (TaskViewModel)selectedItems.FirstOrDefault();
                 SelectedAttorneySeries = task.AttorneySeries;
                 SelectedCaseInfo = CaseInfos.Find(s => s.AttorneySeries == SelectedAttorneySeries);
+                List<FileViewModel> fileinfos;
+
                 Paths = new List<string>();
                 CasePath = Userinfo.WorkPath + "NewApplication\\"+SelectedAttorneySeries;
                 HttpDataService hds = new HttpDataService(Cookie);
-                List<FileViewModel> fileinfos = hds.GetFileInfos(SelectedCaseInfo.taskInfos[0].TaskID);
+                fileinfos = hds.GetFileInfos(SelectedCaseInfo.taskInfos[0].TaskID);
+
                 FileList = new ObservableCollection<FileViewModel>();
                 foreach (var item in fileinfos)
                 {
@@ -288,42 +312,21 @@ namespace WorkAssistMVVM.ViewModels
             }
 
         }
-
-        private void OnForward(object parameter)
+        public DelegateCommand<WebBrowser> ForwardCommand { get; private set; }        
+        private void OnForward(WebBrowser wb)
         {
-            if (Index < Paths.Count - 1)
+            if (wb.CanGoForward && wb.Source !=null && wb.Source.LocalPath.Contains(selectedAttorneySeries))
             {
-                Index = Index + 1;
-                CasePath = Paths[Index];
+                wb.GoForward();
             }
-
         }
 
-        private void OnBackward(object parameter)
+        public DelegateCommand<WebBrowser> BackwardCommand { get; private set; }
+        private void OnBackward(WebBrowser wb)
         {
-            if (Index > 0)
+            if (wb.CanGoBack && wb.Source != null && !wb.Source.LocalPath.Equals(Userinfo.WorkPath + "NewApplication\\" + selectedAttorneySeries))
             {
-                Index = Index - 1;
-                CasePath = Paths[Index];
-            }
-
-        }
-
-        private void OnBrowse(object parameter)
-        {
-            if (parameter != null)
-            {
-                WebBrowser wb = (WebBrowser)parameter;
-
-                if (wb.Source != null)
-                {
-                    string path = wb.Source.LocalPath;
-                    if (Paths.FindIndex(s => s.Equals(path)) < 0)
-                    {
-                        Paths.Add(path);
-                    }
-                    Index = Paths.FindIndex(s=>s.Equals(path));
-                }
+                wb.GoBack();
             }
         }
 
@@ -344,9 +347,10 @@ namespace WorkAssistMVVM.ViewModels
                     uint datasize = 1024;
                     StringBuilder cookieData = new StringBuilder((int)datasize);
                     InternetGetCookieEx("http://www.acip.vip/index.aspx", null, cookieData, ref datasize, INTERNET_COOKIE_HTTPONLY, IntPtr.Zero);
-                    //Cookie = cookieData.ToString().Replace(';', ',');
                     Cookie = cookieData.ToString();
-
+                    object name = doc.getElementById("sp_cn_name");
+                    HTMLLIElement element = (HTMLLIElement)name;
+                    Userinfo.UserName = element.innerHTML;
                     HttpDataService httpdataservice = new HttpDataService(Cookie);
                     Departments = httpdataservice.GetDepartmentList();
                     Userinfo.UserId = httpdataservice.GetUserID();
@@ -356,7 +360,11 @@ namespace WorkAssistMVVM.ViewModels
 
         private void OnOpenLocal(object parameter)
         {
-            Process.Start("explorer.exe ", Userinfo.WorkPath + "NewApplication\\" + SelectedAttorneySeries);
+            if (Directory.Exists(Userinfo.WorkPath + "NewApplication\\" + SelectedAttorneySeries))
+            {
+                Process.Start("explorer.exe ", Userinfo.WorkPath + "NewApplication\\" + SelectedAttorneySeries);
+            }
+            
         }
 
 
