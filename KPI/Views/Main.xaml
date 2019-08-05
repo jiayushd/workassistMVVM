@@ -1,0 +1,219 @@
+﻿<UserControl x:Class="KPI.Views.Main"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:converter ="clr-namespace:KPI.Converters"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <UserControl.Resources>
+        <converter:CheckboxConverter x:Key="cc"  />
+    </UserControl.Resources>
+    <Grid>
+        <Border Background="#FF038F94">
+            <ScrollViewer x:Name="scrolls" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <ScrollViewer.Content>
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition />
+                            <RowDefinition Height="40"/>
+                        </Grid.RowDefinitions>
+                        <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                            <DatePicker x:Name="dpStart" VerticalContentAlignment="Center" Height="30" Width="90" BorderBrush="White" SelectedDate="{Binding StartDate}"/>
+                            <Label Content="-" />
+                            <DatePicker x:Name="dpEnd" VerticalContentAlignment="Center" Height="30" Width="90" BorderBrush="White" SelectedDate="{Binding EndDate}"/>
+                            <Button Content="筛选" Style="{DynamicResource ButtonStyle1}" 
+                                    Height="30" Width="60" Margin="5" Command="{Binding SiftCommand}"/>
+                            <Button Content="刷新" Style="{DynamicResource ButtonStyle1}" 
+                                    Height="30" Width="60" Margin="5" Command="{Binding RefreshCommand}"
+                                    ToolTip="尽量选择可能有数据更新的时间段，减少所需要刷新的数据量"/>
+                        </WrapPanel>
+                        <WrapPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">                                
+                            <CheckBox x:Name="cbSelectAll" Content="全选" 
+                                      Style="{DynamicResource cbStyleKPI}" 
+                                      Margin="10,0,0,0" 
+                                      Command="{Binding CheckAllCommand}" >
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbSelectAll" Path="Content"/>
+                                        <Binding ElementName="cbSelectAll" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                            <CheckBox x:Name="cbBJ" Content="北京" IsChecked="{Binding ElementName=cbSelectAll,Path=IsChecked,Mode=OneWay}"
+                                      Style="{DynamicResource cbStyleKPI}" Command="{Binding CheckCommand}"
+                                      IsEnabled="{Binding SelectedKpiInfos.Count}">
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbBJ" Path="Content"/>
+                                        <Binding ElementName="cbBJ" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                            <CheckBox x:Name="cbSH" Content="上海" IsChecked="{Binding ElementName=cbSelectAll,Path=IsChecked,Mode=OneWay}"
+                                      Style="{DynamicResource cbStyleKPI}" 
+                                      Command="{Binding CheckCommand}" 
+                                      IsEnabled="{Binding KPIinfos.Count}">
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbSH" Path="Content"/>
+                                        <Binding ElementName="cbSH" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                            <CheckBox x:Name="cbGZ" Content="广州" IsChecked="{Binding ElementName=cbSelectAll,Path=IsChecked,Mode=OneWay}"
+                                      Style="{DynamicResource cbStyleKPI}"
+                                      Command="{Binding CheckCommand}"
+                                      IsEnabled="{Binding KPIinfos.Count}">
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbGZ" Path="Content"/>
+                                        <Binding ElementName="cbGZ" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                            <CheckBox x:Name="cbSZ" Content="深圳" IsChecked="{Binding ElementName=cbSelectAll,Path=IsChecked,Mode=OneWay}"
+                                      Style="{DynamicResource cbStyleKPI}"
+                                      Command="{Binding CheckCommand}"
+                                      IsEnabled="{Binding KPIinfos.Count}">
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbSZ" Path="Content"/>
+                                        <Binding ElementName="cbSZ" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                            <CheckBox x:Name="cbCS" Content="长沙" IsChecked="{Binding ElementName=cbSelectAll,Path=IsChecked,Mode=OneWay}"
+                                      Style="{DynamicResource cbStyleKPI}"
+                                      Command="{Binding CheckCommand}"
+                                      IsEnabled="{Binding KPIinfos.Count}">
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbCS" Path="Content"/>
+                                        <Binding ElementName="cbCS" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                            <CheckBox x:Name="cbSuZhou" Content="苏州" IsChecked="{Binding ElementName=cbSelectAll,Path=IsChecked,Mode=OneWay}"
+                                      Style="{DynamicResource cbStyleKPI}"
+                                      Command="{Binding CheckCommand}"
+                                      IsEnabled="{Binding KPIinfos.Count}">
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbSuZhou" Path="Content"/>
+                                        <Binding ElementName="cbSuZhou" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                            <CheckBox x:Name="cbXiAn" Content="西安" IsChecked="{Binding ElementName=cbSelectAll,Path=IsChecked,Mode=OneWay}"
+                                      Style="{DynamicResource cbStyleKPI}"
+                                      Command="{Binding CheckCommand}"
+                                      IsEnabled="{Binding KPIinfos.Count}">
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbXiAn" Path="Content"/>
+                                        <Binding ElementName="cbXiAn" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                            <CheckBox x:Name="cbFS" Content="佛山" IsChecked="{Binding ElementName=cbSelectAll,Path=IsChecked,Mode=OneWay}"
+                                      Style="{DynamicResource cbStyleKPI}"
+                                      Command="{Binding CheckCommand}"
+                                      IsEnabled="{Binding KPIinfos.Count}">
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbFS" Path="Content"/>
+                                        <Binding ElementName="cbFS" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                            <CheckBox x:Name="cbHZ" Content="杭州" IsChecked="{Binding ElementName=cbSelectAll,Path=IsChecked,Mode=OneWay}"
+                                      Style="{DynamicResource cbStyleKPI}"
+                                      Command="{Binding CheckCommand}"
+                                      IsEnabled="{Binding KPIinfos.Count}">
+                                <CheckBox.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource cc}">
+                                        <Binding ElementName="cbHZ" Path="Content"/>
+                                        <Binding ElementName="cbHZ" Path="IsChecked"/>
+                                    </MultiBinding>
+                                </CheckBox.CommandParameter>
+                            </CheckBox>
+                        </WrapPanel>
+
+                        <WrapPanel Grid.Row="2"  HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Button Content="计划表" Style="{DynamicResource ButtonStyle1}" 
+                                    Height="30" Width="80" Margin="5" Command="{Binding NavigateCommand}" 
+                                    CommandParameter="KPIPlan" />
+                            <Button Content="打分表" Style="{DynamicResource ButtonStyle1}" 
+                                    Height="30" Width="80" Margin="5" Command="{Binding NavigateCommand}"
+                                    CommandParameter="AttitudeScore"/>
+                            <Button Content="生成绩效计划" Style="{DynamicResource ButtonStyle1}" 
+                                    Height="30" Width="80" Margin="5" Command="{Binding GeneratePlanTableCommand}"/>
+                            <Button Content="生成考核表" Style="{DynamicResource ButtonStyle1}" 
+                                    Height="30" Width="80" Margin="5" Command="{Binding GenerateDoneTableCommand}"/>
+                            <Button Content="导出汇总表" Style="{DynamicResource ButtonStyle1}" 
+                                    Height="30" Width="80" Margin="5" Command="{Binding ExportDoneTableCommand}"/>
+                            <Button Content="主管级绩效" Style="{DynamicResource ButtonStyle1}" 
+                                    Height="30" Width="80" Margin="5" Command="{Binding SupervisorCommand}"/>
+                            <TextBox Width="300" Height="30" Text="{Binding Name}"/>
+                        </WrapPanel>
+                        <DataGrid x:Name="dgKPI" Grid.Row="3" AutoGenerateColumns="False" 
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                  HeadersVisibility="Column"
+                                  CanUserAddRows="False" Style="{DynamicResource dgStyle}"
+                                  ItemsSource="{Binding SelectedKpiInfos}" >
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Binding="{Binding ElementName=cbxAllSelect, Path=IsChecked}" Width="80">
+                                    <DataGridCheckBoxColumn.Header>
+                                        <DataGridCell>
+                                            <CheckBox x:Name="cbxAllSelect" Content="全选" />
+                                        </DataGridCell>
+                                    </DataGridCheckBoxColumn.Header>
+                                </DataGridCheckBoxColumn>
+                                <!--<DataGridTextColumn Header="序号" Binding="{Binding KPIInfo.Index}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="*"/>-->
+                                <DataGridTextColumn Header="年" Binding="{Binding KPIInfo.Year}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="60"/>
+                                <DataGridTextColumn Header="月" Binding="{Binding KPIInfo.Month}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="区域" Binding="{Binding KPIInfo.Zone}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="姓名" Binding="{Binding KPIInfo.Name}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="递交" Binding="{Binding KPIInfo.DonePoint}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="初稿" Binding="{Binding KPIInfo.FirstVirsionPoint}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" Width="60"/>
+                                <DataGridTextColumn Header="专利度" Binding="{Binding KPIInfo.PatentDegree}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="及时率" Binding="{Binding KPIInfo.InTimePortion}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="递交目标" Binding="{Binding KPIInfo.DonePoint_Target}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="初稿目标" Binding="{Binding KPIInfo.FirstVirsionPoint_Target}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="专利度目标" Binding="{Binding KPIInfo.PatentDegree_Target}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="及时率目标" Binding="{Binding KPIInfo.InTimePortion_Target}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="团队协作" Binding="{Binding KPIInfo.Score_Cowork}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="积极性" Binding="{Binding KPIInfo.Score_Passion}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="主动性" Binding="{Binding KPIInfo.Score_Selfdrive}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                                <DataGridTextColumn Header="得分" Binding="{Binding KPIInfo.Score}" HeaderStyle="{DynamicResource dgColumnHeaderStyle}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <WrapPanel Grid.Row="4">
+                            <Label Content="递交权值：" Style="{DynamicResource lbStyleKPI}"/>
+                            <TextBox x:Name="tbDonePointTotal" Style="{DynamicResource tbStyleKPI}" Text="{Binding DoneTotalForExam}"/>
+                            <Label Content="/" Style="{DynamicResource lbStyleKPI}"/>
+                            <TextBox x:Name="tbDonePointTotal1" Style="{DynamicResource tbStyleKPI}" Text="{Binding DoneTotal}"/>
+                            <Label Content="初稿权值：" Style="{DynamicResource lbStyleKPI}"/>
+                            <TextBox x:Name="tbFirstversionPointTotal" Style="{DynamicResource tbStyleKPI}" Text="{Binding FirstVersionTotal}"/>
+                            <Label Content="专利度：" Style="{DynamicResource lbStyleKPI}"/>
+                            <TextBox x:Name="tbPatentDegreeTotal" Style="{DynamicResource tbStyleKPI}" Text="{Binding PatentDegree}"/>
+                            <Label Content="及时交付率：" Style="{DynamicResource lbStyleKPI}"/>
+                            <TextBox x:Name="tbIntimeRatioTotal" Style="{DynamicResource tbStyleKPI}" Text="{Binding IntimeRatio}"/>
+                            <Label Content="发明占比：" Style="{DynamicResource lbStyleKPI}"/>
+                            <TextBox x:Name="tbInventionRatioTotal" Style="{DynamicResource tbStyleKPI}" Text="{Binding InventionRatio}"/>
+                            <Label Content="授权率：" Style="{DynamicResource lbStyleKPI}"/>
+                            <TextBox x:Name="tbAuthorizedRatioTotal" Style="{DynamicResource tbStyleKPI}" Text="{Binding GrantedRatio}"/>
+                            <Button Content="刷新" Style="{DynamicResource ButtonStyle1}" Width="35"/>
+                        </WrapPanel>
+                        <TextBox x:Name="tbMessage" Grid.Row="1" Grid.RowSpan="3" Margin="5" Visibility="Hidden" Width="300" HorizontalAlignment="Left" Background="#CC002060" Opacity="0.7" Foreground="White" FontSize="13" FontFamily="微软雅黑"/>
+                    </Grid>
+                </ScrollViewer.Content>
+            </ScrollViewer>
+
+        </Border>
+    </Grid>
+</UserControl>
